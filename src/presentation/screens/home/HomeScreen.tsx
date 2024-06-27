@@ -86,9 +86,7 @@ export const HomeScreen = () => {
             </View>
         </TouchableOpacity>
 
-        <Button onPress={onPressMandarUbicacion} >
-          Iniciar
-        </Button>
+        
       </Layout>
     </MainLayout>
   );
