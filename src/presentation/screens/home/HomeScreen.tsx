@@ -25,6 +25,7 @@ export const HomeScreen = () => {
   const handleCrearCotizacion = () => {
     // Lógica para crear cotización
     console.log("Crear Cotización");
+    navigation.navigate('QuoteScreen');
   };
 
   const handleRegistrarVisita = () => {
