@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, Image, StyleSheet } from 'react-native';
-import { Layout, Text, Button, Input, Divider } from '@ui-kitten/components';
+import { Layout, Text, Button, Input, Divider, RadioGroup, Radio, Select, SelectItem } from '@ui-kitten/components';
 import Select2 from 'react-native-select-two';
 import { co3Api } from '../../../config/api/co3Api';
 //import 'react-native-select-two-languages/languages/spanish';
@@ -92,29 +92,38 @@ export const QuoteScreen = () => {
           selectButtonText="Seleccionar"
           cancelButtonText="Cancelar"
         />
-        <Text style={styles.clientAddress}>{selectedCliente ? selectedCliente.company_name : ''}</Text>
-      </Layout>
-
-      <Divider />
-
-      <Layout style={styles.section}>
+        <Text style={styles.clientAddress}>{selectedCliente ? selectedCliente.address : ''}</Text>
+      
         <Text category='h5'>2. Seleccione tipo de documento fiscal:</Text>
-        {/* Implementa la selección de tipo de documento fiscal según tus necesidades */}
-      </Layout>
-
-      <Divider />
-
-      <Layout style={styles.section}>
+        <RadioGroup
+          selectedIndex={selectedDocumentType}
+          onChange={index => setSelectedDocumentType(index)}
+        >
+          <Radio>Credito Fiscal</Radio>
+          <Radio>Factura</Radio>
+          <Radio>Exportación</Radio>
+        </RadioGroup>
+      
         <Text category='h5'>3. Seleccione tipo y medio de pago:</Text>
         <Text>Tipo de Pago:</Text>
-        {/* Implementa la selección de tipo de pago según tus necesidades */}
+        <RadioGroup
+          selectedIndex={selectedPaymentType}
+          onChange={index => setSelectedPaymentType(index)}
+        >
+          <Radio>Contado</Radio>
+          <Radio>Credito</Radio>
+        </RadioGroup>
         <Text>Medio de Pago:</Text>
-        {/* Implementa la selección de medio de pago según tus necesidades */}
-      </Layout>
-
-      <Divider />
-
-      <Layout style={styles.section}>
+        <Select
+          selectedIndex={selectedPaymentMethod}
+          onSelect={index => setSelectedPaymentMethod(index)}
+          value={paymentMethods[selectedPaymentMethod?.row]}
+        >
+          {paymentMethods.map((method, index) => (
+            <SelectItem title={method} key={index} />
+          ))}
+        </Select>
+      
         <Text category='h5'>Agregar productos:</Text>
         <Select2
           isSelectSingle
