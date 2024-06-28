@@ -67,7 +67,7 @@ export const QuoteScreen = () => {
 
   const calculateTotal = () => {
     let subtotal = products.reduce((sum, product) => sum + product.amount * product.price, 0);
-    let iva = selectedPaymentMethod === 'Contado' ? subtotal * 0.13 : 0;
+    let iva = selectedDocumentType === 0 ? subtotal * 0.13 : 0; // Assuming 0 is the index for "Credito Fiscal"
     let total = subtotal + iva;
     return { subtotal, iva, total };
   };
@@ -86,12 +86,16 @@ export const QuoteScreen = () => {
           popupTitle="Selecciona un cliente"
           title="Selecciona un cliente"
           data={clientes.map(cliente => ({ id: cliente.id, name: cliente.company_name }))}
-          onSelect={data => setSelectedCliente(clientes.find(cliente => cliente.id === data[0]))}
+          onSelect={data => {
+            const selected = clientes.find(cliente => cliente.id === data[0]);
+            setSelectedCliente(selected);
+          }}
           selectedData={selectedCliente ? [{ id: selectedCliente.id, name: selectedCliente.company_name }] : []}
           searchPlaceHolderText="Buscar..."
           selectButtonText="Seleccionar"
           cancelButtonText="Cancelar"
         />
+        <Text style={styles.clientAddress}>{selectedCliente ? selectedCliente.company_name : ''}</Text>
         <Text style={styles.clientAddress}>{selectedCliente ? selectedCliente.address : ''}</Text>
       
         <Text category='h5'>2. Seleccione tipo de documento fiscal:</Text>
@@ -132,12 +136,18 @@ export const QuoteScreen = () => {
           popupTitle="Selecciona un producto"
           title="Selecciona un producto"
           data={productos.map(producto => ({ id: producto.id, name: `${producto.barcode} || ${producto.name}` }))}
-          onSelect={data => setSelectedProductIndex(productos.findIndex(producto => producto.id === data[0].id))}
+          onSelect={data => {
+            const index = productos.findIndex(producto => producto.id === data[0]);
+            setSelectedProductIndex(index);
+          }}
           selectedData={selectedProductIndex !== null ? [{ id: productos[selectedProductIndex].id, name: `${productos[selectedProductIndex].barcode} || ${productos[selectedProductIndex].name}` }] : []}
           searchPlaceHolderText="Buscar..."
           selectButtonText="Seleccionar"
           cancelButtonText="Cancelar"
         />
+        <Text style={styles.productInfo}>
+          {selectedProductIndex !== null ? `${productos[selectedProductIndex].name}\nBC ${productos[selectedProductIndex].barcode}` : ''}
+        </Text>
         <Input
           style={styles.input}
           placeholder="Cantidad"
@@ -154,15 +164,25 @@ export const QuoteScreen = () => {
         />
         <Button onPress={addProduct}>Agregar</Button>
         <Layout style={styles.table}>
-          <Text>Productos Agregados:</Text>
-          {products.map(product => (
-            <Layout key={product.id} style={styles.tableRow}>
-              <Text>{product.name}</Text>
-              <Text>{product.amount}</Text>
-              <Text>{product.price}</Text>
-            </Layout>
-          ))}
+        <Layout style={styles.tableHeader}>
+          <Text category="h6" style={styles.productName}>
+            Producto
+          </Text>
+          <Text category="h6" style={styles.amountPrice}>
+            Cantidad
+          </Text>
+          <Text category="h6" style={styles.amountPrice}>
+            Precio
+          </Text>
         </Layout>
+        {products.map((product) => (
+          <Layout key={product.id} style={styles.tableRow}>
+            <Text style={styles.productName}>{product.name}</Text>
+            <Text style={styles.amountPrice}>{product.amount}</Text>
+            <Text style={styles.amountPrice}>${product.price.toFixed(2)}</Text>
+          </Layout>
+        ))}
+      </Layout>
         <Text>Subtotal: ${subtotal.toFixed(2)}</Text>
         <Text>IVA: ${iva.toFixed(2)}</Text>
         <Text>Total: ${total.toFixed(2)}</Text>
@@ -197,6 +217,16 @@ const styles = StyleSheet.create({
   },
   table: {
     marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    overflow: 'hidden', // Para que los bordes redondeados se vean bien
+  },
+  tableHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
+    backgroundColor: '#f0f0f0',
   },
   tableRow: {
     flexDirection: 'row',
@@ -204,5 +234,15 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+  },
+  productName: {
+    flex: 1, // Para que ocupe el espacio restante
+  },
+  amountPrice: {
+    width: 80, // Ancho fijo para cantidad y precio
+    textAlign: 'right', // Alinear texto a la derecha
+  },
+  productInfo: {
+    marginVertical: 10,
   },
 });
