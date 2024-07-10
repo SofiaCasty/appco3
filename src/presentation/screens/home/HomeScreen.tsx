@@ -68,6 +68,7 @@ export const HomeScreen = () => {
             <MyIcon name="home-outline" color="#fff" />
           </View>
         </Card>
+        
         {/* <Card style={styles.card} onPress={handleRegistrarTurno}>
           <View style={styles.cardContent}>
             <View style={styles.textContainer}>

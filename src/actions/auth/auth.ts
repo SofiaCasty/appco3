@@ -26,6 +26,7 @@ export const authLogin = async (email: string, password: string) => {
         return data;
     } catch (error) {
         console.log(error);
+        console.log("erroooooooor");
         return null;
     }
 }
